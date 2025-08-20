@@ -6,22 +6,18 @@ import 'package:http/http.dart' as http;
 class AccountServce {
   final StreamController<String> _streamController = StreamController<String>();
   Stream<String> get streamInfos => _streamController.stream;
+  String url = "https://api.github.com/gists/57933551e45ee9457e561c89daee0715";
 
-  Future<List<dynamic>> requestDataAsync() async {
-    String url =
-        "https://gist.githubusercontent.com/geovannifranca/57933551e45ee9457e561c89daee0715/raw/6f75faa4b77d0568b8ef88454242dcb26f0bb9e0/accounts.json";
+  Future<List<dynamic>> getAll() async {
     http.Response response = await http.get(Uri.parse(url));
     _streamController.add("${DateTime.now()} || requisição de leitura.");
     return json.decode(response.body);
   }
 
-  Future<String> sendDataAsync(Map<String, dynamic> mapAccount) async {
-    List<dynamic> listAccounts = await requestDataAsync();
+  Future<String> addAccount(Map<String, dynamic> mapAccount) async {
+    List<dynamic> listAccounts = await getAll();
     listAccounts.add(mapAccount);
     String countent = json.encode(listAccounts);
-
-    String url =
-        "https://api.github.com/gists/57933551e45ee9457e561c89daee0715";
 
     http.Response response = await http.post(
       Uri.parse(url),
