@@ -3,34 +3,7 @@ import 'dart:convert';
 import 'package:dart_assincronismo/api_key.dart';
 import 'package:http/http.dart' as http;
 
-StreamController<String> streamController = StreamController<String>();
-
-void main() {
-  StreamSubscription streamSubscription = streamController.stream.listen((
-    String info,
-  ) {
-    print(info);
-  });
-  requestDate();
-  requestDataAsync();
-  sendDataAsync({
-    "id": "NEW001",
-    "name": "flutter",
-    "lastName": "dart",
-    "balance": 5000,
-  });
-}
-
-void requestDate() async {
-  String url =
-      "https://gist.githubusercontent.com/geovannifranca/57933551e45ee9457e561c89daee0715/raw/6f75faa4b77d0568b8ef88454242dcb26f0bb9e0/accounts.json";
-  Future<http.Response> futureResponse = http.get(Uri.parse(url));
-  await futureResponse.then((http.Response response) {
-    streamController.add(
-      "${DateTime.now()} || requisição de leitura (usando o then).",
-    );
-  });
-}
+void main() {}
 
 Future<List<dynamic>> requestDataAsync() async {
   String url =
