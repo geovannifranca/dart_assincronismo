@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:dart_assincronismo/api_key.dart';
+import '../models/account.dart';
 import 'package:http/http.dart' as http;
 
 class AccountServce {
@@ -8,10 +9,20 @@ class AccountServce {
   Stream<String> get streamInfos => _streamController.stream;
   String url = "https://api.github.com/gists/57933551e45ee9457e561c89daee0715";
 
-  Future<List<dynamic>> getAll() async {
+  Future<List<Account>> getAll() async {
     http.Response response = await http.get(Uri.parse(url));
     _streamController.add("${DateTime.now()} || requisição de leitura.");
-    return json.decode(response.body);
+    Map<String, dynamic> mapResponse = json.decode(response.body);
+    List<dynamic> listDynamic = json.decode(
+      mapResponse["files"]["account.json"]["content"],
+    );
+    List<Account> listAccount = [];
+    for (dynamic dyn in listAccount) {
+      Map<String, dynamic> mapAccount = dyn as Map<String, dynamic>;
+      Account account = Account.fromMap(mapAccount);
+      listAccount.add(account);
+    }
+    return listAccount;
   }
 
   Future<String> addAccount(Map<String, dynamic> mapAccount) async {
