@@ -17,7 +17,7 @@ class AccountServce {
       mapResponse["files"]["account.json"]["content"],
     );
     List<Account> listAccount = [];
-    for (dynamic dyn in listAccount) {
+    for (dynamic dyn in listDynamic) {
       Map<String, dynamic> mapAccount = dyn as Map<String, dynamic>;
       Account account = Account.fromMap(mapAccount);
       listAccount.add(account);
@@ -25,10 +25,16 @@ class AccountServce {
     return listAccount;
   }
 
-  Future<String> addAccount(Map<String, dynamic> mapAccount) async {
-    List<dynamic> listAccounts = await getAll();
-    listAccounts.add(mapAccount);
-    String countent = json.encode(listAccounts);
+  Future<String> addAccount(Account account) async {
+    List<Account> listAccounts = await getAll();
+    listAccounts.add(account);
+
+    List<Map<String, dynamic>> listContent = [];
+    for (Account account in listAccounts) {
+      listContent.add(account.toMap());
+    }
+
+    String content = json.encode(listContent);
 
     http.Response response = await http.post(
       Uri.parse(url),
@@ -37,19 +43,19 @@ class AccountServce {
         "description": "account.json",
         "public": true,
         "files": {
-          "accounts.json": {"content": countent},
+          "accounts.json": {"content": content},
         },
       }),
     );
     if (response.statusCode.toString()[0] == "2") {
       _streamController.add(
-        "${DateTime.now()} || requisição adição bem sucedida (${mapAccount["name"]}).",
+        "${DateTime.now()} || requisição adição bem sucedida (${account.name}).",
       );
     } else {
       _streamController.add(
-        "${DateTime.now()} || requisição falho. (${mapAccount["name"]}).",
+        "${DateTime.now()} || requisição falho. (${account.name}).",
       );
     }
-    return countent;
+    return content;
   }
 }
