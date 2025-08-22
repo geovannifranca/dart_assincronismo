@@ -10,18 +10,26 @@ class AccountServce {
   String url = "https://api.github.com/gists/57933551e45ee9457e561c89daee0715";
 
   Future<List<Account>> getAll() async {
-    http.Response response = await http.get(Uri.parse(url));
-    _streamController.add("${DateTime.now()} || requisição de leitura.");
-    Map<String, dynamic> mapResponse = json.decode(response.body);
-    List<dynamic> listDynamic = json.decode(
-      mapResponse["files"]["account.json"]["content"],
+    http.Response response = await http.get(
+      Uri.parse(url),
+      headers: {
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+      },
     );
+    _streamController.add("${DateTime.now()} || requisição de leitura.");
+    Map<String, dynamic> mapResponse = await json.decode(response.body);
+    List<dynamic> listDynamic = await json.decode(
+      mapResponse["files"]["accounts.json"]["content"],
+    );
+
     List<Account> listAccount = [];
     for (dynamic dyn in listDynamic) {
       Map<String, dynamic> mapAccount = dyn as Map<String, dynamic>;
-      Account account = Account.fromMap(mapAccount);
-      listAccount.add(account);
+      Account accountt = Account.fromMap(mapAccount);
+      listAccount.add(accountt);
     }
+
     return listAccount;
   }
 
